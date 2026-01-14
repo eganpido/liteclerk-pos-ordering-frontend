@@ -1,3 +1,17 @@
-/* You can add global styles to this file, and also import other style files */
+/* 1. Google Fonts pinaka-una gyud */
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700;800&display=swap');
 
+/* 2. Isunod ang Tailwind */
 @import "tailwindcss";
+
+@theme {
+    --font-sans: "Open Sans", ui-sans-serif, system-ui, sans-serif;
+    --primary: #08b17a;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    /* Pugngan ang scroll sa tibuok page */
+}
