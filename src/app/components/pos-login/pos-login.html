@@ -1,26 +1,31 @@
 <div
-    class="min-h-screen w-full flex items-center justify-center bg-slate-50 relative overflow-hidden font-sans text-slate-700">
+    class="min-h-screen w-full flex items-center justify-center bg-slate-50 relative overflow-hidden font-sans text-slate-700 p-4">
+    <div class="absolute inset-0 z-0 pointer-events-none">
+        <div
+            class="absolute top-[-5%] left-[-10%] w-64 h-64 lg:w-96 lg:h-96 bg-[#2596be]/20 rounded-full blur-3xl animate-blob">
+        </div>
+        <div
+            class="absolute bottom-[-5%] right-[-10%] w-72 h-72 lg:w-[30rem] lg:h-[30rem] bg-[#92c254]/20 rounded-full blur-3xl animate-blob animation-delay-2000">
+        </div>
+    </div>
 
-    <div class="absolute top-[-10%] left-[-10%] w-80 h-80 bg-[#2596be]/10 rounded-full blur-3xl"></div>
-    <div class="absolute bottom-[-10%] right-[-10%] w-96 h-96 bg-[#92c254]/10 rounded-full blur-3xl"></div>
+    <div [class.animate-shake]="errorMessage"
+        class="w-full max-w-md bg-white/80 backdrop-blur-xl rounded-[2rem] sm:rounded-[3rem] shadow-[0_32px_64px_-12px_rgba(0,0,0,0.1)] border border-white relative z-10 overflow-hidden transition-all duration-300">
 
-    <div
-        class="w-full max-w-md bg-white/80 backdrop-blur-xl rounded-[3rem] shadow-[0_32px_64px_-12px_rgba(0,0,0,0.1)] border border-white relative z-10 overflow-hidden m-4">
-
-        <div class="p-8 sm:p-14">
-
-            <div class="flex flex-col items-center mb-10">
+        <div class="p-6 sm:p-14 max-h-[95vh] overflow-y-auto custom-scrollbar">
+            <div class="flex flex-col items-center mb-6 sm:mb-10">
                 <div
-                    class="relative w-20 h-20 bg-white flex items-center justify-center mb-4 transition-transform hover:scale-105 duration-300">
-                    <img src="/liteclerk.png" alt="Liteclerk Logo" class="w-full h-full object-contain">
+                    class="relative w-16 h-16 sm:w-20 sm:h-20 bg-white flex items-center justify-center mb-4 transition-transform hover:scale-110 duration-500 rounded-2xl">
+                    <img src="/liteclerk.png" alt="Liteclerk Logo" class="w-full h-full object-contain p-2">
                 </div>
-
                 <div class="text-center">
-                    <h1 class="text-3xl font-semibold tracking-tighter uppercase leading-none text-gray-500">
+                    <h1
+                        class="text-2xl sm:text-3xl font-semibold tracking-tighter uppercase leading-none text-gray-500">
                         LITECLERK<span class="text-[#92c254] not-italic"> POS</span>
                     </h1>
-                    <p class="text-[10px] font-semibold text-slate-400 tracking-[0.3em] uppercase mt-2">Cloud Solutions
-                    </p>
+                    <p
+                        class="text-[9px] sm:text-[10px] font-semibold text-slate-400 tracking-[0.2em] sm:tracking-[0.3em] uppercase mt-2">
+                        Cloud Solutions</p>
                 </div>
             </div>
 
@@ -33,24 +38,24 @@
                             d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1-2 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
                             clip-rule="evenodd" />
                     </svg>
-                    <p class="text-xs font-semibold text-red-700 leading-tight uppercase tracking-wider">{{ errorMessage
-                        }}</p>
+                    <p class="text-[10px] sm:text-xs font-semibold text-red-700 leading-tight uppercase tracking-wider">
+                        {{ errorMessage }}</p>
                 </div>
             </div>
             }
 
-            <div class="space-y-5">
+            <div class="space-y-4 sm:space-y-5 transition-opacity duration-300" [class.opacity-50]="isLoading"
+                [class.pointer-events-none]="isLoading">
+
                 <div class="group">
                     <label
-                        class="block text-[11px] font-semibold text-slate-500 tracking-widest uppercase mb-2 px-1 group-focus-within:text-[#2596be] transition-colors">
-                        Username
-                    </label>
+                        class="block text-[10px] sm:text-[11px] font-semibold text-slate-500 tracking-widest uppercase mb-1.5 px-1 group-focus-within:text-[#2596be] transition-colors">Username</label>
                     <div class="relative">
-                        <input type="text" [(ngModel)]="username" (keyup.enter)="onLogin()"
-                            class="w-full px-6 py-4 bg-slate-100/50 border-2 border-slate-100 focus:border-[#2596be] focus:bg-white rounded-2xl outline-none transition-all duration-300 font-semibold text-slate-700 placeholder:text-slate-300 placeholder:font-normal"
+                        <input type="text" [(ngModel)]="username" (keyup.enter)="onLogin()" autofocus
+                            class="w-full px-5 py-3.5 sm:px-6 sm:py-4 bg-slate-100/50 border-2 border-slate-100 focus:border-[#2596be] focus:bg-white rounded-xl sm:rounded-2xl outline-none transition-all duration-300 text-slate-700 placeholder:text-slate-300 text-sm sm:text-base"
                             placeholder="Enter username">
                         <div
-                            class="absolute right-5 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-[#2596be] transition-colors">
+                            class="absolute right-5 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-[#2596be]">
                             <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"
                                 fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"
                                 stroke-linejoin="round">
@@ -63,17 +68,14 @@
 
                 <div class="group">
                     <label
-                        class="block text-[11px] font-semibold text-slate-500 tracking-widest uppercase mb-2 px-1 group-focus-within:text-[#2596be] transition-colors">
-                        Password
-                    </label>
+                        class="block text-[10px] sm:text-[11px] font-semibold text-slate-500 tracking-widest uppercase mb-1.5 px-1 group-focus-within:text-[#2596be] transition-colors">Password</label>
                     <div class="relative">
                         <input [type]="isPasswordVisible ? 'text' : 'password'" [(ngModel)]="password"
                             (keyup.enter)="onLogin()"
-                            class="w-full px-6 py-4 bg-slate-100/50 border-2 border-slate-100 focus:border-[#2596be] focus:bg-white rounded-2xl outline-none transition-all duration-300 font-semibold text-slate-700 placeholder:text-slate-300"
+                            class="w-full px-5 py-3.5 sm:px-6 sm:py-4 bg-slate-100/50 border-2 border-slate-100 focus:border-[#2596be] focus:bg-white rounded-xl sm:rounded-2xl outline-none transition-all duration-300 font-semibold text-slate-700 placeholder:text-slate-300 text-sm sm:text-base"
                             placeholder="••••••••">
-
                         <div (click)="togglePassword()"
-                            class="absolute right-5 top-1/2 -translate-y-1/2 text-slate-300 hover:text-[#2596be] cursor-pointer transition-colors p-1">
+                            class="absolute right-5 top-1/2 -translate-y-1/2 text-slate-300 hover:text-[#2596be] cursor-pointer p-1">
                             @if (!isPasswordVisible) {
                             <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"
                                 fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"
@@ -95,29 +97,69 @@
                     </div>
                 </div>
 
-                <button (click)="onLogin()"
-                    class="group relative w-full bg-[#2596be] text-white font-semibold tracking-[0.2em] py-5 rounded-2xl shadow-xl shadow-[#2596be]/20 transition-all duration-300 active:scale-[0.97] overflow-hidden mt-4 uppercase">
-                    <div class="absolute inset-0 bg-white/10 group-hover:bg-transparent transition-colors"></div>
-                    <span class="relative flex items-center justify-center gap-2">
-                        Sign In Access
-                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
-                            stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"
-                            class="group-hover:translate-x-1 transition-transform">
-                            <line x1="5" y1="12" x2="19" y2="12" />
-                            <polyline points="12 5 19 12 12 19" />
-                        </svg>
-                    </span>
-                </button>
+                <div class="group">
+                    <label
+                        class="block text-[10px] sm:text-[11px] font-semibold text-slate-500 tracking-widest uppercase mb-1.5 px-1 group-focus-within:text-[#2596be] transition-colors">Terminal</label>
+                    <div class="relative">
+                        <div
+                            class="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none text-slate-400">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                                xmlns="http://www.w3.org/2000/svg">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
+                                    d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2-2v10a2 2 0 002 2z">
+                                </path>
+                            </svg>
+                        </div>
+                        <select [(ngModel)]="selectedTerminalId" name="terminalId" [disabled]="true"
+                            class="bg-slate-100/50 border-2 border-slate-100 text-slate-700 text-sm rounded-xl sm:rounded-2xl focus:border-[#2596be] focus:bg-white block w-full pl-11 pr-10 py-3.5 sm:py-4 appearance-none cursor-pointer disabled:opacity-70 disabled:cursor-not-allowed outline-none transition-all duration-300">
+                            <option value="" disabled>-- Select Terminal --</option>
+                            @for (term of terminals; track term.terminalId) {
+                            <option [value]="term.terminalId">{{ term.terminalNumber }}</option>
+                            }
+                        </select>
+                        <div
+                            class="absolute inset-y-0 right-4 flex items-center pr-1 pointer-events-none text-slate-400">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="3">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"></path>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
             </div>
 
-            <div class="mt-12 text-center flex flex-col items-center gap-4">
+            <button (click)="onLogin()" [disabled]="isLoading"
+                class="group relative w-full bg-[#2596be] disabled:bg-[#2596be]/70 text-white font-semibold tracking-[0.15em] sm:tracking-[0.2em] py-4 sm:py-5 rounded-xl sm:rounded-2xl shadow-xl shadow-[#2596be]/20 transition-all duration-300 active:scale-[0.97] overflow-hidden mt-6 sm:mt-8 uppercase text-sm sm:text-base">
+                <div class="absolute inset-0 bg-white/10 group-hover:bg-transparent transition-colors"></div>
+                <span class="relative flex items-center justify-center gap-3">
+                    @if (isLoading) {
+                    <svg class="animate-spin h-5 w-5 text-white" viewBox="0 0 24 24">
+                        <path class="opacity-75" fill="currentColor"
+                            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+                        </path>
+                    </svg>
+                    Authenticating...
+                    } @else {
+                    Sign In Access
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"
+                        class="group-hover:translate-x-1 transition-transform">
+                        <line x1="5" y1="12" x2="19" y2="12" />
+                        <polyline points="12 5 19 12 12 19" />
+                    </svg>
+                    }
+                </span>
+            </button>
+
+            <div class="mt-8 sm:mt-12 text-center flex flex-col items-center gap-2">
                 <div class="flex items-center gap-4">
-                    <span class="w-8 h-px bg-slate-100"></span>
-                    <p class="text-slate-500 text-[11px] font-semibold tracking-widest leading-none">
+                    <span class="w-6 sm:w-8 h-px bg-slate-100"></span>
+                    <p
+                        class="text-slate-500 text-[10px] sm:text-[11px] font-semibold tracking-widest leading-none uppercase">
                         &copy; 2026 Liteclerk Corporation
                     </p>
-                    <span class="w-8 h-px bg-slate-100"></span>
+                    <span class="w-6 sm:w-8 h-px bg-slate-100"></span>
                 </div>
+                <p class="text-slate-400 text-[10px] sm:text-[11px] font-medium tracking-tight">v{{ appVersion }}</p>
             </div>
         </div>
     </div>

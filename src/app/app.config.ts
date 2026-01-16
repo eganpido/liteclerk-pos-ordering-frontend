@@ -1,11 +1,15 @@
 import { ApplicationConfig } from '@angular/core';
-import { provideRouter } from '@angular/router';
-import { provideHttpClient } from '@angular/common/http'; // I-import kini
+import { provideRouter, withComponentInputBinding } from '@angular/router';
+import { provideHttpClient, withInterceptors } from '@angular/common/http'; // I-import kini
+import { authInterceptor } from './auth.interceptor'; // I-import ang imong gi-save nga file
 import { routes } from './app.routes';
 
 export const appConfig: ApplicationConfig = {
   providers: [
-    provideRouter(routes),
-    provideHttpClient(),
+    provideRouter(routes, withComponentInputBinding()),
+
+    provideHttpClient(
+      withInterceptors([authInterceptor])
+    )
   ]
 };
