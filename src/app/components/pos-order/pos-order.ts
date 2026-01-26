@@ -1,7 +1,8 @@
-import { Component, OnInit, inject, signal, input } from '@angular/core';
+import { Component, OnInit, inject, signal, input, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { PosOrderService } from '../pos-order/pos-order.service';
 import { Router } from '@angular/router';
+import { switchMap, of } from 'rxjs';
 
 @Component({
   selector: 'app-pos-order',
@@ -13,16 +14,25 @@ import { Router } from '@angular/router';
 export class PosOrder implements OnInit {
   private posOrderService = inject(PosOrderService);
   private router = inject(Router);
+
   orderId = input.required<number>();
   orderNumber = signal<string>('');
   orderDate = signal<string>('');
-  tableNumber = signal<string>('');
+  tableCode = signal<string>('');
   itemGroups = signal<any[]>([]);
   selectedGroupId = signal<number | null>(null);
   filteredItems = signal<any[]>([]);
   currentOrderItems = signal<any[]>([]);
   fullName = signal<string>('');
   terminalNumber = signal<string>('');
+  isOrderOpen = signal(false);
+  isClosing = signal(false);
+
+  showConfirmModal = signal(false);
+  itemToDelete = signal<any>(null);
+  showClearAllModal = signal(false);
+  searchQuery = signal<string>('');
+  allGroupItems = signal<any[]>([]);
 
   ngOnInit() {
     this.loadUserInfo();
@@ -37,9 +47,7 @@ export class PosOrder implements OnInit {
 
   loadItemGroups() {
     this.posOrderService.getItemGroups().subscribe({
-      next: (data: any) => {
-        this.itemGroups.set(data);
-      },
+      next: (data: any) => this.itemGroups.set(data),
       error: (err: any) => console.error('Error loading groups:', err)
     });
   }
@@ -53,59 +61,110 @@ export class PosOrder implements OnInit {
       error: (err) => console.error('Error items:', err)
     });
 
-    this.posOrderService.getOrderById(id).subscribe({
-      next: (res: any) => {
-        if (res && res.order && res.order.orderNumber) {
-          this.orderNumber.set(res.order.orderNumber);
-          this.orderDate.set(res.order.orderDate);
+    this.posOrderService.getOrderById(id).pipe(
+      switchMap((res: any) => {
+        const orderData = res?.order || res;
+
+        if (orderData && orderData.orderNumber) {
+          this.orderNumber.set(orderData.orderNumber);
+          this.orderDate.set(orderData.orderDate);
+          return this.posOrderService.getTableById(orderData.tableId);
         } else {
-          console.warn('Warning: orderNumber is missing in res.order!', res);
-          this.orderNumber.set(`ORD-${id}`);
+          console.warn('Order details not found in response:', res);
+          return of(null);
         }
+      })
+    ).subscribe({
+      next: (tableRes: any) => {
+        if (tableRes?.tableCode) this.tableCode.set(tableRes.tableCode);
       },
-      error: (err) => console.error('Error order info:', err)
+      error: (err) => console.error('Error in Order/Table Chain:', err)
     });
   }
 
+  displayItems = computed(() => {
+    const query = this.searchQuery().toLowerCase().trim();
+    const items = this.allGroupItems();
+
+    if (!query) return items;
+
+    return items.filter(item =>
+      item.itemDescription.toLowerCase().includes(query) ||
+      (item.itemCode && item.itemCode.toLowerCase().includes(query))
+    );
+  });
+
   onGroupSelect(groupId: number) {
     this.selectedGroupId.set(groupId);
+    this.searchQuery.set('');
     this.posOrderService.getItemsByGroup(groupId).subscribe({
-      next: (data: any) => {
-        this.filteredItems.set(data);
-      },
+      next: (data: any) => this.allGroupItems.set(data),
       error: (err: any) => console.error('Error loading items by group:', err)
     });
   }
 
-  getGroupIcon(groupName: string): string {
-    const name = groupName.toLowerCase();
-    if (name.includes('rice')) return '🍚';
-    if (name.includes('drink') || name.includes('beverage')) return '🥤';
-    if (name.includes('appetizer')) return '🥗';
-    if (name.includes('dessert')) return '🍰';
-    if (name.includes('main') || name.includes('dish')) return '🍳';
-    return '📦'; // Default icon
+  onSearchChange(event: Event) {
+    const value = (event.target as HTMLInputElement).value;
+    this.searchQuery.set(value);
+  }
+
+  clearSearch() {
+    this.searchQuery.set('');
   }
 
   addToOrder(item: any) {
-    const currentOrderId = this.orderId();
+    this.updateQuantityLogic(item, 1);
+  }
 
-    const newItem = {
-      orderId: currentOrderId,
-      itemId: item._id,
+  increaseQuantity(item: any) {
+    this.updateQuantityLogic(item, 1);
+  }
+
+  decreaseQuantity(item: any) {
+    if (item.quantity <= 1) {
+      this.itemToDelete.set(item);
+      this.showConfirmModal.set(true);
+    } else {
+      this.updateQuantityLogic(item, -1);
+    }
+  }
+
+  private updateQuantityLogic(item: any, change: number) {
+    const payload = {
+      orderId: this.orderId(),
+      itemId: item.itemId,
       itemDescription: item.itemDescription,
       price: item.price,
-      quantity: 1,
-      subtotal: item.price * 1
+      quantity: change
     };
 
-    this.posOrderService.saveOrderItem(newItem).subscribe({
-      next: (res: any) => {
-        console.log('Item saved!', res);
-        this.loadOrderDetails();
-      },
-      error: (err: any) => console.error('Error saving item:', err)
+    this.posOrderService.saveOrderItem(payload).subscribe({
+      next: () => this.loadOrderDetails(),
+      error: (err) => console.error('Error updating quantity:', err)
     });
+  }
+
+  openDeleteConfirm(item: any) {
+    this.itemToDelete.set(item);
+    this.showConfirmModal.set(true);
+  }
+
+  confirmDelete() {
+    const item = this.itemToDelete();
+    if (item) {
+      this.posOrderService.removeOrderItem(item.orderItemId).subscribe({
+        next: () => {
+          this.loadOrderDetails();
+          this.closeModal();
+        },
+        error: (err) => console.error('Error deleting item:', err)
+      });
+    }
+  }
+
+  closeModal() {
+    this.showConfirmModal.set(false);
+    this.itemToDelete.set(null);
   }
 
   calculateSubtotal(): number {
@@ -117,10 +176,57 @@ export class PosOrder implements OnInit {
   }
 
   calculateTotal(): number {
-    return this.calculateSubtotal() + this.calculateTax();
+    return this.calculateSubtotal()
+    // return this.calculateSubtotal() + this.calculateTax();
   }
 
   goBack() {
     this.router.navigate(['/pos']);
+  }
+
+  toggleOrder() {
+    this.isOrderOpen.set(!this.isOrderOpen());
+  }
+
+  closeOrder() {
+    this.isClosing.set(true);
+    setTimeout(() => {
+      this.isOrderOpen.set(false);
+      this.isClosing.set(false);
+    }, 400);
+  }
+
+  getGroupCategory(groupName: string): string {
+    const name = groupName.toLowerCase();
+    if (name.includes('rice')) return 'rice';
+    if (name.includes('drink') || name.includes('beverage')) return 'drinks';
+    if (name.includes('appetizer') || name.includes('starter') || name.includes('dessert')) return 'appetizer';
+    if (name.includes('main') || name.includes('dish')) return 'main';
+    if (name.includes('liquor') || name.includes('alcohol')) return 'alcohol';
+    return 'default';
+  }
+
+  openClearAllConfirm() {
+    if (this.currentOrderItems().length === 0) return;
+    this.showClearAllModal.set(true);
+  }
+  confirmClearAll() {
+    const id = this.orderId();
+
+    this.posOrderService.removeOrderItems(id).subscribe({
+      next: () => {
+        this.loadOrderDetails();
+        this.closeClearAllModal();
+        console.log('Order items cleared successfully');
+      },
+      error: (err: any) => {
+        console.error('Error clearing order:', err);
+        alert('Failed to clear order items.');
+      }
+    });
+  }
+
+  closeClearAllModal() {
+    this.showClearAllModal.set(false);
   }
 }

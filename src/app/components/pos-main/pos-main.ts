@@ -24,6 +24,13 @@ export class PosMain implements OnInit {
   currentDate = signal(new Date());
   isOnline = signal(navigator.onLine);
   showNetworkAlert = signal(false);
+
+  showTableActionModal = signal(false);
+  selectedTable = signal<any>(null);
+  activeOrderId = signal<number | null>(null);
+  showConfirmResetModal = signal(false);
+  showCreateOrderModal = signal(false);
+
   private timer: any;
   private networkSub?: Subscription;
 
@@ -89,21 +96,20 @@ export class PosMain implements OnInit {
   }
 
   onTableClick(table: any) {
+    this.selectedTable.set(table);
     const idToUse = table.tableId;
 
     if (table.status === 'Vacant') {
-      this.createOrderFlow(idToUse);
+      this.showCreateOrderModal.set(true);
     } else {
       this.posService.getActiveOrderByTable(idToUse).subscribe({
         next: (res) => {
-          this.router.navigate(['/pos-order', res.orderId]);
+          this.activeOrderId.set(res.orderId);
+          this.showTableActionModal.set(true);
         },
         error: (err) => {
-          if (err.status === 404) {
-            this.createOrderFlow(idToUse);
-          } else {
-            console.error('Other Error:', err);
-          }
+          console.error('Occupied but no order found:', err);
+          this.showCreateOrderModal.set(true);
         }
       });
     }
@@ -116,6 +122,52 @@ export class PosMain implements OnInit {
       },
       error: (err) => console.error('Failed to create order:', err)
     });
+  }
+
+  viewExistingOrder() {
+    const orderId = this.activeOrderId();
+    if (orderId) {
+      this.showTableActionModal.set(false);
+      this.router.navigate(['/pos-order', orderId]);
+    }
+  }
+
+  confirmClearTable() {
+    const table = this.selectedTable();
+    const orderId = this.activeOrderId();
+
+    if (!table || !orderId) return;
+
+    this.posService.clearAndVacantTable(orderId, table.tableId).subscribe({
+      next: () => {
+        this.fetchInitialData();
+        this.closeAllModals();
+      },
+      error: (err) => console.error('Reset failed:', err)
+    });
+  }
+
+  confirmCreateOrder() {
+    const table = this.selectedTable();
+    if (table) {
+      this.showCreateOrderModal.set(false);
+      this.createOrderFlow(table.tableId);
+    }
+  }
+
+  closeModal() {
+    this.showTableActionModal.set(false);
+    this.selectedTable.set(null);
+    this.activeOrderId.set(null);
+  }
+
+  closeAllModals() {
+    this.showConfirmResetModal.set(false);
+    this.showTableActionModal.set(false);
+  }
+
+  openResetConfirmation() {
+    this.showConfirmResetModal.set(true);
   }
 
   onLogout() {

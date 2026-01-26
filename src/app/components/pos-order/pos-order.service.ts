@@ -16,6 +16,14 @@ export class PosOrderService {
         return this.http.get<any>(`${this.apiUrl}/orders/${id}`);
     }
 
+    getTableById(id: number): Observable<any> {
+        return this.http.get<any>(`${this.apiUrl}/tables/${id}`);
+    }
+
+    getTerminalById(id: number): Observable<any> {
+        return this.http.get<any>(`${this.apiUrl}/terminlas/${id}`);
+    }
+
     getItemGroups(): Observable<any[]> {
         return this.http.get<any[]>(`${this.apiUrl}/item-groups`);
     }
@@ -38,5 +46,9 @@ export class PosOrderService {
 
     removeOrderItem(orderItemId: number): Observable<any> {
         return this.http.delete<any>(`${this.apiUrl}/orders/item/${orderItemId}`);
+    }
+
+    removeOrderItems(orderId: number) {
+        return this.http.delete(`${this.apiUrl}/orders/items/${orderId}`);
     }
 }

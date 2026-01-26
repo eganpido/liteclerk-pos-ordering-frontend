@@ -45,8 +45,6 @@ export class PosService {
         return this.http.get<any[]>(`${this.apiUrl}/table-groups/tables/${id}`);
     }
 
-    // pos-main.service.ts
-
     createNewOrder(tableId: number): Observable<any> {
         const orderPayload = {
             orderData: {
@@ -63,5 +61,9 @@ export class PosService {
 
     getActiveOrderByTable(tableId: number): Observable<any> {
         return this.http.get<any>(`${this.apiUrl}/orders/active/${tableId}`);
+    }
+
+    clearAndVacantTable(orderId: number, tableId: number) {
+        return this.http.delete(`${this.apiUrl}/orders/reset-table/${orderId}/${tableId}`);
     }
 }
