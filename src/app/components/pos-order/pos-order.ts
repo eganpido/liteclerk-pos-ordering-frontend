@@ -47,8 +47,15 @@ export class PosOrder implements OnInit {
 
   loadItemGroups() {
     this.posOrderService.getItemGroups().subscribe({
-      next: (data: any) => this.itemGroups.set(data),
-      error: (err: any) => console.error('Error loading groups:', err)
+      next: (data: any[]) => {
+        // TAN-AWA NI PAG-AYO SA CONSOLE
+        console.log('First Item in Groups:', data[0]);
+
+        // I-check kung unsa ang saktong ngalan sa field para sa '79'
+        // Basin 'posItemGroupId' o 'id' o 'posId'?
+
+        this.itemGroups.set(data);
+      }
     });
   }
 
@@ -94,12 +101,22 @@ export class PosOrder implements OnInit {
     );
   });
 
-  onGroupSelect(groupId: number) {
-    this.selectedGroupId.set(groupId);
-    this.searchQuery.set('');
-    this.posOrderService.getItemsByGroup(groupId).subscribe({
-      next: (data: any) => this.allGroupItems.set(data),
-      error: (err: any) => console.error('Error loading items by group:', err)
+  onGroupSelect(received: any) {
+    let idToUse: number;
+
+    if (typeof received === 'object') {
+      idToUse = received.posItemGroupId;
+    } else {
+      // Kung '1' ra gyud ang niabot, pangitaon nato ang 79 sa itemGroups list
+      const foundGroup = this.itemGroups().find(g => g.itemGroupId === received);
+      idToUse = foundGroup ? foundGroup.posItemGroupId : received;
+    }
+
+    console.log('Final Sync ID:', idToUse); // Dapat 79 na jud ni mogawas
+
+    this.selectedGroupId.set(idToUse);
+    this.posOrderService.getItemsByGroup(idToUse).subscribe({
+      next: (data) => this.allGroupItems.set(data)
     });
   }
 

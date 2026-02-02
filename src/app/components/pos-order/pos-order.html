@@ -34,19 +34,18 @@
             </p>
 
             @for (group of itemGroups(); track group.itemGroupId) {
-            <button (click)="onGroupSelect(group.itemGroupId)"
-                [class.bg-slate-900]="selectedGroupId() === group.itemGroupId"
-                [class.text-white]="selectedGroupId() === group.itemGroupId"
-                [class.shadow-xl]="selectedGroupId() === group.itemGroupId"
-                [class.shadow-slate-200]="selectedGroupId() === group.itemGroupId"
-                class="w-full flex items-center justify-center md:justify-between p-3 rounded-2xl transition-all duration-300 group border border-transparent active:scale-95"
-                [class.hover:bg-[#f2f3f4]]="selectedGroupId() !== group.itemGroupId"
-                [class.hover:shadow-md]="selectedGroupId() !== group.itemGroupId"
-                [class.hover:border-slate-100]="selectedGroupId() !== group.itemGroupId">
+            <button (click)="onGroupSelect(group)" [class.bg-slate-900]="selectedGroupId() === group.posItemGroupId"
+                [class.text-white]="selectedGroupId() === group.posItemGroupId"
+                [class.shadow-xl]="selectedGroupId() === group.posItemGroupId"
+                [class.shadow-slate-200]="selectedGroupId() === group.posItemGroupId"
+                class="relative w-full flex items-center justify-center md:justify-between p-3 rounded-2xl transition-all duration-300 group border border-transparent active:scale-95"
+                [class.hover:bg-[#f2f3f4]]="selectedGroupId() !== group.posItemGroupId"
+                [class.hover:shadow-md]="selectedGroupId() !== group.posItemGroupId"
+                [class.hover:border-slate-100]="selectedGroupId() !== group.posItemGroupId">
 
                 <div class="flex items-center gap-4">
                     <div class="w-10 h-10 rounded-xl flex items-center justify-center transition-all duration-300"
-                        [ngClass]="selectedGroupId() === group.itemGroupId 
+                        [ngClass]="selectedGroupId() === group.posItemGroupId 
                 ? 'bg-white/20 text-white' 
                 : 'bg-blue-50 text-blue-500'">
 
@@ -56,7 +55,6 @@
                                 <path stroke-linecap="round" stroke-linejoin="round"
                                     d="M12 21a9.004 9.004 0 0 0 8.716-6.747M12 21a9.004 9.004 0 0 1-8.716-6.747M12 21c2.485 0 4.5-4.03 4.5-9S14.485 3 12 3m0 18c-2.485 0-4.5-4.03-4.5-9S9.515 3 12 3m0 0a8.997 8.997 0 0 1 7.843 4.582M12 3a8.997 8.997 0 0 0-7.843 4.582" />
                             </svg>
-
                             <svg *ngSwitchCase="'drinks'" xmlns="http://www.w3.org/2000/svg" fill="none"
                                 viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 3L13.5 6L12 7.5" />
@@ -64,32 +62,6 @@
                                 <path stroke-linecap="round" stroke-linejoin="round"
                                     d="M7.5 7.5L8.5 19.5C8.5 20.3284 9.17157 21 10 21H14C14.8284 21 15.5 20.3284 15.5 19.5L16.5 7.5" />
                             </svg>
-
-                            <svg *ngSwitchCase="'main'" xmlns="http://www.w3.org/2000/svg" fill="none"
-                                viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
-                                <path stroke-linecap="round" stroke-linejoin="round"
-                                    d="M3 18.75V19.5a.75.75 0 0 0 .75.75h16.5a.75.75 0 0 0 .75-.75v-.75" />
-                                <path stroke-linecap="round" stroke-linejoin="round"
-                                    d="M5.25 18.75A6.75 6.75 0 0 1 12 12a6.75 6.75 0 0 1 6.75 6.75m-13.5 0h13.5" />
-                                <path stroke-linecap="round" stroke-linejoin="round"
-                                    d="M12 12V9.75m0 0a2.25 2.25 0 1 0-2.25-2.25A2.25 2.25 0 0 0 12 9.75Z" />
-                            </svg>
-
-                            <svg *ngSwitchCase="'alcohol'" xmlns="http://www.w3.org/2000/svg" fill="none"
-                                viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
-                                <path stroke-linecap="round" stroke-linejoin="round"
-                                    d="M10.5 3h3v3.75h-3V3ZM9 7.5a1.5 1.5 0 0 1 1.5-1.5h3A1.5 1.5 0 0 1 15 7.5V10c0 .484.062.96.183 1.417l1.04 3.93c.277 1.05.418 2.128.418 3.21V21H7.5v-.444c0-1.081.141-2.159.418-3.21l1.04-3.93A5.432 5.432 0 0 1 9 10V7.5Z" />
-                            </svg>
-
-                            <svg *ngSwitchCase="'appetizer'" xmlns="http://www.w3.org/2000/svg" fill="none"
-                                viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
-                                <path stroke-linecap="round" stroke-linejoin="round"
-                                    d="M21 12c0 1.2-4.03 6-9 6s-9-4.8-9-6c0-1.2 4.03-1.5 9-1.5s9 .3 9 1.5Z" />
-                                <path stroke-linecap="round" stroke-linejoin="round"
-                                    d="M12 10.5c0-2.485-1.515-4.5-4.5-4.5m4.5 4.5c0-2.485 1.515-4.5 4.5-4.5m-4.5 4.5V3" />
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M3 12h18" />
-                            </svg>
-
                             <svg *ngSwitchDefault xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
                                 stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
                                 <path stroke-linecap="round" stroke-linejoin="round"
@@ -104,9 +76,9 @@
                     </span>
                 </div>
 
-                @if (selectedGroupId() === group.itemGroupId) {
+                @if (selectedGroupId() === group.posItemGroupId) {
                 <div class="hidden md:flex items-center">
-                    <div class="w-1.5 h-1.5 bg-blue-500 rounded-full shadow-[0_0_8px_rgba(249,115,22,0.8)] mr-2">
+                    <div class="w-2 h-2 bg-blue-500 rounded-full shadow-[0_0_10px_rgba(59,130,246,0.8)] mr-2">
                     </div>
                 </div>
                 }
@@ -182,20 +154,29 @@
         <div
             class="md:hidden bg-[#f2f3f4]/90 backdrop-blur-md border-b border-slate-100 overflow-x-auto no-scrollbar py-3 px-4 flex gap-3 sticky top-20 z-50 shadow-sm">
             @for (group of itemGroups(); track group.itemGroupId) {
-            <button (click)="onGroupSelect(group.itemGroupId)"
-                [class.bg-slate-900]="selectedGroupId() === group.itemGroupId"
-                [class.text-white]="selectedGroupId() === group.itemGroupId"
-                class="whitespace-nowrap px-4 py-2 rounded-xl text-[10px] font-bold uppercase tracking-wider transition-all active:scale-95 border border-slate-100 shadow-sm shrink-0"
-                [class.bg-white]="selectedGroupId() !== group.itemGroupId"
-                [class.text-slate-600]="selectedGroupId() !== group.itemGroupId">
+            <button (click)="onGroupSelect(group)"
+                class="relative whitespace-nowrap px-4 py-2 rounded-xl text-[10px] font-bold uppercase tracking-wider transition-all active:scale-95 border border-slate-100 shadow-sm shrink-0"
+                [class.bg-slate-900]="selectedGroupId() === group.posItemGroupId"
+                [class.text-white]="selectedGroupId() === group.posItemGroupId"
+                [class.bg-white]="selectedGroupId() !== group.posItemGroupId"
+                [class.text-slate-600]="selectedGroupId() !== group.posItemGroupId">
+
                 {{ group.itemGroup }}
+
+                @if (selectedGroupId() === group.posItemGroupId) {
+                <span class="absolute -top-1 -right-1 flex h-3 w-3">
+                    <span
+                        class="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
+                    <span class="relative inline-flex rounded-full h-3 w-3 bg-blue-500"></span>
+                </span>
+                }
             </button>
             }
         </div>
 
         <div class="flex-1 overflow-y-auto p-4 md:p-10">
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-6">
-                @for (item of displayItems(); track item.itemId) {
+                @for (item of displayItems(); track item.posItemId) {
                 <div (click)="addToOrder(item)"
                     class="group relative bg-[#e4e5e5] rounded-4xl md:rounded-[2.5rem] p-3 transition-all duration-500 hover:shadow-[0_20px_50px_rgba(0,0,0,0.05)] border border-transparent hover:border-blue-200 cursor-pointer flex flex-col active:scale-95">
 

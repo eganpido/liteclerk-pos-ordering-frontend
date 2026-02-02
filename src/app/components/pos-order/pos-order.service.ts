@@ -21,11 +21,13 @@ export class PosOrderService {
     }
 
     getTerminalById(id: number): Observable<any> {
-        return this.http.get<any>(`${this.apiUrl}/terminlas/${id}`);
+        return this.http.get<any>(`${this.apiUrl}/terminals/${id}`);
     }
 
     getItemGroups(): Observable<any[]> {
-        return this.http.get<any[]>(`${this.apiUrl}/item-groups`);
+        return this.http.get<any[]>(`${this.apiUrl}/item-groups`).pipe(
+            tap(data => console.log('Raw Data from API:', data)) // I-check ni sa console!
+        );
     }
 
     getItemsByGroup(groupId: number): Observable<any[]> {
